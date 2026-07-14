@@ -166,12 +166,35 @@ def GenerateReports():
     print("\n ===Thank You=== \n")
 
 
+def AttendanceRecord():
+    students = LoadStudentFile()
+    present = 0
+    absent = 0
+    AttClass = int(input("Enter total number of Classed held : "))
+    try:
+        roll_no = int(input("Enter Roll Number : "))
+        for student in students:
+            if student["Roll_No"] == roll_no:
+                status = input("Enter Status(P / A) : ")
+                if status == 'P' or status == 'p':
+                    present += 1
+                else:
+                    absent += 1
+            else:
+                print("Student Not Found!")
+    except ValueError:
+        print("Please enter valid Roll Number!")
+    AttPerce = (present / AttClass) * 100
+    print(f"Attendance Percentage : {AttPerce}")
+
 #main function
 def main():
+
+    students = LoadStudentFile()
     
     print("\n ===STUDENT MANAGEMENT SYSTEM=== \n")
     while True:
-        print("\n1.Add Student\n2.Remove Student\n3.Search Student\n4.Update Marks\n5.Generate Reports\n6.Exit\n")
+        print("\n1.Add Student\n2.Remove Student\n3.Search Student\n4.Update Marks\n5.Generate Reports\n6.Attendance Record\n7.Exit")
         try:
             choice = int(input("Enter your choice : "))
         except ValueError:
@@ -188,6 +211,8 @@ def main():
         elif choice == 5:
             GenerateReports()
         elif choice == 6:
+                AttendanceRecord()
+        elif choice == 7:
             return
         else:
             print("Invalid Choice!")
