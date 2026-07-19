@@ -13,6 +13,21 @@ def SaveInfo(students):
     with open("StudentFile.json","w") as file:
         json.dump(students,file)
 
+def LoadAttendanceFile():
+    try:
+        with open("AttendanceFile.json", "r") as file:
+            return json.load(file)
+
+    except FileNotFoundError:
+        return {
+            "Total_Class": 0
+        }
+
+
+def SaveAttendance(attendance):
+    with open("AttendanceFile.json", "w") as file:
+        json.dump(attendance, file, indent=4)
+
 class Students:
     def __init__(self,fname,dob,roll_no,std,div):
         self.Full_Name = fname
@@ -168,24 +183,43 @@ def GenerateReports():
 
 def AttendanceRecord():
     students = LoadStudentFile()
-    present = 0
-    absent = 0
-    AttClass = int(input("Enter total number of Classed held : "))
-    try:
-        roll_no = int(input("Enter Roll Number : "))
-        for student in students:
-            if student["Roll_No"] == roll_no:
-                status = input("Enter Status(P / A) : ")
-                if status == 'P' or status == 'p':
-                    present += 1
-                else:
-                    absent += 1
+    attendance = LoadAttendanceFile()
+
+    attendance["Total_Class"] += 1
+    SaveAttendance(attendance)
+
+    for student in students:
+
+        print(f"\nRoll No : {student['Roll_No']}")
+        print(f"Name    : {student['Full_Name']}")
+
+        if "Present_day" not in student:
+            student["Present_day"] = 0
+
+        if "Absent_day" not in student:
+            student["Absent_day"] = 0
+
+        while True:
+            status = input("Attendance (P/A): ").lower()
+
+            if status == "p":
+                student["Present_day"] += 1
+                break
+
+            elif status == "a":
+                student["Absent_day"] += 1
+                break
+
             else:
-                print("Student Not Found!")
-    except ValueError:
-        print("Please enter valid Roll Number!")
-    AttPerce = (present / AttClass) * 100
-    print(f"Attendance Percentage : {AttPerce}")
+                print("Invalid input! Please enter P or A.")
+
+        percentage = (student["Present_day"] / attendance["Total_Class"]) * 100
+
+        print(f"Attendance : {percentage:.2f}%")
+
+    SaveInfo(students)
+
+    print("\nAttendance Updated Successfully!")
 
 #main function
 def main():
